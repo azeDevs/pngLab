@@ -1,7 +1,315 @@
-package utils
-
 object ColorNames {
 /*
+Nokia Blue
+#005aff
+ Like
+Angel Blue (RAL Design)
+#96AED0
+ Like
+Picton Blue
+#45B1E8
+ Like
+Light Ultramarine Blue
+#4147C0
+ Like
+Teal Blue (Crayola)
+#008080
+ Like
+Mosaic Blue
+#47B7DC
+ Like
+Blue Screen
+#150DF7
+ Like
+January Blue
+#00A1B9
+ Like
+Hippie Blue
+#331878
+ Like
+Lagoon Blue (RAL Design)
+#0084A0
+ Like
+Blue Bolt
+#355BF5
+ Like
+Mild Blue
+#617CB5
+ Like
+Madonna Blue
+#71B5D1
+ Like
+Mineral Blue
+#187194
+ Like
+Romantic Blue
+#AAD1E7
+ Like
+Marietta Blue
+#00205B
+ Like
+Oxford Blue
+#002147
+ Like
+Boy Blue
+#8CACD6
+ Like
+Skype Blue
+#00AFF0
+ Like
+Sea Blue (RAL Design)
+#80B2C9
+ Like
+Battery Charged Blue
+#1DACD6
+ Like
+Gulf Blue
+#7BB5DC
+ Like
+German Blue
+#049BE5
+ Like
+Blue Red
+#360BA2
+ Like
+Harbour Blue
+#3D7391
+ Like
+Mohair Soft Blue Grey
+#97B2B7
+ Like
+Cambridge Blue
+#8BC0B5
+ Like
+Nile Blue
+#35579B
+ Like
+Louis Blue
+#A8B8C6
+ Like
+Different Blue
+#2F668C
+ Like
+Culinary Blue
+#7BB6C1
+ Like
+Nature Blue
+#4B89BF
+ Like
+Satin Soft Blue
+#9CADC7
+ Like
+Caribbean Blue
+#4C9BB0
+ Like
+Light Blue (Crayola)
+#8FD8D8
+ Like
+Coronation Blue
+#59529C
+ Like
+Jordy Blue
+#8BB8F1
+ Like
+Functional Blue
+#3F6086
+ Like
+Bluetiful
+#1E4BCA
+ Like
+Mediterranean Blue
+#327BC4
+ Like
+Single Blue
+#243C5A
+ Like
+Hazy Blue
+#BCC8CC
+ Like
+Light Violet Blue
+#806AEC
+ Like
+Majorelle Blue
+#6050DC
+ Like
+Frosty White Blue
+#CCE9E4
+ Like
+French Blue (Pantone)
+#0072B5
+ Like
+Neon Aqua Blue
+#23C1FF
+ Like
+Blue Bonnet
+#3838F0
+ Like
+Feather Soft Blue
+#A2AEBF
+ Like
+Opera Blue
+#453E6E
+ Like
+Discord Blue
+#5865F2
+ Like
+Dark Ice Blue
+#53CCDC
+ Like
+Bermuda Blue
+#8CB1C2
+ Like
+New Blue Sky
+#41ADFF
+ Like
+Coastal Blue
+#55A9DC
+ Like
+Mallard Blue
+#214C4F
+ Like
+Airy Blue
+#93B7D5
+ Like
+Maximum Blue Green
+#30BFBF
+ Like
+Synthetic Blue
+#142B6B
+ Like
+Zircon Blue
+#00849D
+ Like
+Floral Blue
+#91B6D8
+ Like
+Illusion Blue
+#4F1AA5
+ Like
+Columbia Blue
+#B9D9EB
+ Like
+Yale Blue
+#03346A
+ Like
+Cetacean Blue
+#001440
+ Like
+Lowe’s Blue
+#004990
+ Like
+Kitchen Blue
+#8AB5BD
+ Like
+Fashion Sky Blue
+#1799E7
+ Like
+Honolulu Blue
+#006DB0
+ Like
+Cerritos Blue
+#002E66
+ Like
+UAH Blue
+#0077C8
+ Like
+GoDaddy Blue
+#1BDBDB
+ Like
+Cashmere Blue
+#63779D
+ Like
+Bluetonium
+#BCD5E3
+ Like
+Miami Blue
+#54C3EA
+ Like
+Butterfly Blue
+#5F93CC
+ Like
+Limoges Blue
+#ABBABB
+ Like
+Cisco Blue
+#00BCEB
+ Like
+Zappos Blue
+#0076BD
+ Like
+Blue Pot
+#141854
+ Like
+Light Baby Blue
+#A6DAF4
+ Like
+Infantry Blue
+#30506D
+ Like
+Make-up Blue
+#335F8D
+ Like
+Blue Lavender
+#9995DB
+ Like
+Petrol Blue
+#0C5678
+ Like
+Middle Blue Green
+#8DD9CC
+ Like
+Baja Blue
+#5F6EAE
+ Like
+Hyundai Blue
+#00287A
+ Like
+Majestic Blue
+#302E75
+ Like
+Aztec Blue
+#052B72
+ Like
+Baltimore Blue
+#0076A8
+ Like
+Sierra Blue
+#BFDAF7
+ Like
+Caribbean Blue (RAL Design)
+#5FB5D6
+ Like
+Supreme Blue
+#1953BE
+ Like
+Diode Blue
+#0045B0
+ Like
+DigitalOcean Blue
+#0080FF
+ Like
+Dropbox Blue
+#0061FE
+ Like
+Diamond Blue
+#ACCFE6
+ Like
+Light Topaz Soft Blue
+#B5CDD7
+ Like
+Rugged Blue
+#3A4763
+
+Nokia Blue
+#005aff
+ Like
+Angel Blue (RAL Design)
+#96AED0
+ Like
+Picton Blue
+#45B1E8
+
+
 Absolute Zero		#0048ba
 Acid Green		#b0bf1a
 AliceBlue		#f0f8ff

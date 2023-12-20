@@ -1,35 +1,33 @@
-import models.PixelData
+import models.PxData
 import tools.*
 import utils.Images
-import utils.Printer
 import utils.Printer.getColorStr
 
 fun main() {
 
-    val image = Images.loadImage()
+    val image = Images.loadPng()
     if (image != null) {
 
-        val pixelData = PixelData(image)
+        val pxData = PxData(image)
 
 //        Printer.printPixelDataValues(pixelData)
 
         println("Avg Lumin: ${getColorStr(
-            PixelAnalyzer.getAverageRGB(PixelFilter.filterTopLuminosity(pixelData))
+            PxAnalyzer.getAverageRGB(PxFilter.filterTopLuminosity(pxData))
         )}")
         println("Avg light: ${getColorStr(
-            PixelAnalyzer.getAverageRGB(PixelFilter.filterBrightnessRange(pixelData, 0.75f, 1.0f))
+            PxAnalyzer.getAverageRGB(PxFilter.byBrightness(pxData, 0.75f, 1.0f))
         )}")
         println("Avg midtn: ${getColorStr(
-            PixelAnalyzer.getAverageRGB(PixelFilter.filterBrightnessRange(pixelData, 0.25f, 0.75f))
+            PxAnalyzer.getAverageRGB(PxFilter.byBrightness(pxData, 0.25f, 0.75f))
         )}")
         println("Avg shade: ${getColorStr(
-            PixelAnalyzer.getAverageRGB(PixelFilter.filterBrightnessRange(pixelData, 0.0f, 0.25f))
+            PxAnalyzer.getAverageRGB(PxFilter.byBrightness(pxData, 0.0f, 0.25f))
         )}")
-        Images.saveImageAsPNG(PixelFilter.filterBrightnessRange(pixelData, 0.75f, 1.0f), "out_h")
-        Images.saveImageAsPNG(PixelFilter.filterBrightnessRange(pixelData, 0.25f, 0.75f), "out_m")
-        Images.saveImageAsPNG(PixelFilter.filterBrightnessRange(pixelData, 0.0f, 0.25f), "out_s")
+        Images.savePng(PxFilter.byBrightness(pxData, 0.75f, 1.0f), "out_h")
+        Images.savePng(PxFilter.byBrightness(pxData, 0.25f, 0.75f), "out_m")
+        Images.savePng(PxFilter.byBrightness(pxData, 0.0f, 0.25f), "out_s")
 
-        ColorModifier.modifyAndSaveNewImage(PixelFilter.filterBrightnessRange(pixelData))
 //        Loader.start()
 
     } else println("Failed to load the image.")

@@ -1,11 +1,11 @@
 package tools
 
-import models.PixelData
+import models.PxData
 
-object PixelAnalyzer {
+object PxAnalyzer {
 
-    fun getAverageRGB(pixelData: PixelData): PixelData.RGBA {
-        val rgbaArray = pixelData.getRGBAArray()
+    fun getAverageRGB(pxData: PxData): PxData.RGBA {
+        val rgbaArray = pxData.getData()
         var totalR = 0.0
         var totalG = 0.0
         var totalB = 0.0
@@ -23,7 +23,7 @@ object PixelAnalyzer {
 
         // Avoid division by zero in case of all pixels being fully transparent
         if (totalWeight == 0.0) {
-            return PixelData.RGBA(0, 0, 0, 0)
+            return PxData.RGBA(0, 0, 0, 0)
         }
 
         // Calculating average values
@@ -31,7 +31,7 @@ object PixelAnalyzer {
         val averageG = (totalG / totalWeight).toInt()
         val averageB = (totalB / totalWeight).toInt()
 
-        return PixelData.RGBA(averageR, averageG, averageB, 255) // Alpha set to 255 (opaque) for the average color
+        return PxData.RGBA(averageR, averageG, averageB, 255) // Alpha set to 255 (opaque) for the average color
     }
 
 }

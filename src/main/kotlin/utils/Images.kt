@@ -1,6 +1,6 @@
 package utils
 
-import models.PixelData
+import models.PxData
 import java.awt.image.BufferedImage
 import java.io.File
 import java.nio.file.Paths
@@ -11,8 +11,7 @@ object Images {
     private const val FILENAME_IN = "test" // Replace with the path to your PNG image
     private const val FILENAME_OUT = "out"
 
-
-    fun loadImage(fileName: String = FILENAME_IN): BufferedImage? {
+    fun loadPng(fileName: String = FILENAME_IN): BufferedImage? {
         return try {
             ImageIO.read(getPath("$fileName.png"))
         } catch (e: Exception) {
@@ -21,8 +20,8 @@ object Images {
         }
     }
 
-    fun saveImageAsPNG(pixelData: PixelData, fileName: String = FILENAME_OUT) {
-        val image = createImageFromPixelData(pixelData)
+    fun savePng(pxData: PxData, fileName: String = FILENAME_OUT) {
+        val image = createImageFromPxData(pxData)
         val outputFile = File(getPath("$fileName.png").absolutePath)
         ImageIO.write(image, "png", outputFile)
     }
@@ -32,8 +31,8 @@ object Images {
         return File(Paths.get(DIR_HOME, imagesDir, fileName).toUri())
     }
 
-    private fun createImageFromPixelData(pixelData: PixelData): BufferedImage {
-        val rgbaArray = pixelData.getRGBAArray()
+    private fun createImageFromPxData(pxData: PxData): BufferedImage {
+        val rgbaArray = pxData.getData()
         val height = rgbaArray.size
         val width = if (height > 0) rgbaArray[0].size else 0
         val image = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
