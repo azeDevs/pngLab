@@ -1,6 +1,7 @@
 package utils
 
 import models.PixelData
+import tools.PixelAnalyzer
 import java.awt.Color
 
 /*
@@ -15,18 +16,37 @@ object Printer {
         val rgbaArray = pixelData.getRGBAArray()
         val height = rgbaArray.size
         val width = if (height > 0) rgbaArray[0].size else 0
+        val totalPixels = width * height
+        var skippedPixels = 0
+        var totalSkippedPixels = 0
 
         for (y in rgbaArray.indices) {
             for (x in rgbaArray[y].indices) {
-                println(getCoordStr(x, y) + getColorStr(rgbaArray[y][x]))
+                if (rgbaArray[y][x].a > 0) {
+                    if (skippedPixels > 0) {
+                        println("\rINVISIBLE PIXELS SKIPPED: $skippedPixels")
+                        skippedPixels = 0
+                    }
+                    println(getCoordStr(x, y) + getColorStr(rgbaArray[y][x]))
+                } else {
+                    skippedPixels++
+                    totalSkippedPixels++
+                }
             }
         }
 
-        println("Image Width: $width, Height: $height")
+        if (skippedPixels > 0) println("\rINVISIBLE PIXELS SKIPPED: $skippedPixels")
+        println("─────────────────────────────────────────────────────────────────────────")
+        println("IMAGE DIMENSIONS: ${width}x$height")
+        println("INVISIBLE PIXELS: $totalSkippedPixels / $totalPixels " +
+                "(${String.format("%.0f%%", 100f * totalSkippedPixels / totalPixels)})")
+        println("\nAVERAGE COLOR:    ${getColorStr(PixelAnalyzer.getAverageRGB(pixelData))}\n")
     }
 
     fun getColorStr(rgba: PixelData.RGBA) =
-        getHexStr(rgba) + getRGBAStr(rgba) + getHSBStr(rgba) + getLABStr(rgba)
+        getHexStr(rgba) +
+        getRGBAStr(rgba) +
+        getHSBStr(rgba)
 
     private fun getCoordStr(x: Int, y: Int): String {
         val coordFormat = "X:%-${columnWidth - 2}d Y:%-${columnWidth - 2}d$bar"
@@ -46,24 +66,23 @@ object Printer {
 
     private fun getHSBStr(rgba: PixelData.RGBA): String {
         val hsbVals = Color.RGBtoHSB(rgba.r, rgba.g, rgba.b, null)
-        val hsbFormat = "%-${columnWidth}s %-${columnWidth}s %-${columnWidth}s$bar"
+        val hueDegrees = hsbVals[0] * 360
+        val saturationPercentage = hsbVals[1] * 100
+        val brightnessPercentage = hsbVals[2] * 100
+        val opacityPercentage = (if (rgba.a > 0) (rgba.a / 255f * 100) else 0f)
+        val hsbFormat = "%-${columnWidth}s %-${columnWidth}s %-${columnWidth}s %-${columnWidth}s$bar"
         return String.format(
             hsbFormat,
-            "H:${"%.2f".format(hsbVals[0])}",
-            "S:${"%.2f".format(hsbVals[1])}",
-            "B:${"%.2f".format(hsbVals[2])}"
+            "H:${"%.0f".format(hueDegrees)}°",
+            "S:${"%.0f%%".format(saturationPercentage)}",
+            "B:${"%.0f%%".format(brightnessPercentage)}",
+            "O:${"%.0f%%".format(opacityPercentage)}"
         )
-    }
-
-    private fun getLABStr(rgba: PixelData.RGBA): String {
-        val labL = 0.299 * rgba.r + 0.587 * rgba.g + 0.114 * rgba.b
-        val labFormat = "%-${columnWidth}s$bar"
-        return String.format(labFormat, "L:${"%.2f".format(labL)}")
     }
 
     private fun getHexStr(rgba: PixelData.RGBA): String {
         val hexFormat = "%-${columnWidth}s"
-        val hex = String.format("#%02x%02x%02x%02x", rgba.r, rgba.g, rgba.b, rgba.a).toUpperCase()
+        val hex = String.format("#%02x%02x%02x %02x", rgba.r, rgba.g, rgba.b, rgba.a).toUpperCase()
         return String.format(hexFormat, "$hex$bar")
     }
 

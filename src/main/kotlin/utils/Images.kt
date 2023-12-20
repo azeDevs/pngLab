@@ -8,17 +8,23 @@ import javax.imageio.ImageIO
 
 object Images {
     private val DIR_HOME = Paths.get(System.getProperty("user.dir")).toString()
-    private const val FILENAME_IN = "test.png" // Replace with the path to your PNG image
-    private const val FILENAME_OUT = "out.png"
+    private const val FILENAME_IN = "test" // Replace with the path to your PNG image
+    private const val FILENAME_OUT = "out"
 
 
-    fun loadImage(): BufferedImage? {
+    fun loadImage(fileName: String = FILENAME_IN): BufferedImage? {
         return try {
-            ImageIO.read(getPath(FILENAME_IN))
+            ImageIO.read(getPath("$fileName.png"))
         } catch (e: Exception) {
             println("Error loading image: ${e.message}")
             null
         }
+    }
+
+    fun saveImageAsPNG(pixelData: PixelData, fileName: String = FILENAME_OUT) {
+        val image = createImageFromPixelData(pixelData)
+        val outputFile = File(getPath("$fileName.png").absolutePath)
+        ImageIO.write(image, "png", outputFile)
     }
 
     private fun getPath(fileName: String): File {
@@ -40,12 +46,6 @@ object Images {
             }
         }
         return image
-    }
-
-    fun saveImageAsPNG(pixelData: PixelData) {
-        val image = createImageFromPixelData(pixelData)
-        val outputFile = File(getPath(FILENAME_OUT).absolutePath)
-        ImageIO.write(image, "png", outputFile)
     }
 
 }
