@@ -1,7 +1,8 @@
 package tools
 
-import utils.Images
+import RGBA
 import models.PxData
+import utils.Images
 
 object PxModifier {
 
@@ -13,7 +14,7 @@ object PxModifier {
         Images.savePng(modifiedPixelData)
     }
 
-    private fun modifyFirstPixel(pxData: PxData, averageColor: PxData.RGBA): PxData {
+    private fun modifyFirstPixel(pxData: PxData, averageColor: RGBA): PxData {
         val rgbaArray = pxData.getData()
         if (rgbaArray.isNotEmpty() && rgbaArray[0].isNotEmpty()) {
             rgbaArray[0][0] = averageColor

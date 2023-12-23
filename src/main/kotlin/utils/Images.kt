@@ -2,7 +2,7 @@ package utils
 
 import models.PxData
 import java.awt.image.BufferedImage
-import java.io.File
+import java.io.*
 import java.nio.file.Paths
 import javax.imageio.ImageIO
 
@@ -26,6 +26,41 @@ object Images {
         ImageIO.write(image, "png", outputFile)
     }
 
+    fun saveTga(pxData: PxData, fileName: String = FILENAME_OUT) {
+        val image = createImageFromPxData(pxData)
+        val outputFile = File(getPath("$fileName.tga").absolutePath)
+        writeTGA(image, outputFile)
+    }
+
+    private fun writeTGA(image: BufferedImage, file: File) {
+        DataOutputStream(BufferedOutputStream(FileOutputStream(file))).use { out ->
+            val width = image.width
+            val height = image.height
+
+            // TGA Header
+            val header = ByteArray(18)
+            header[2] = 2 // Truecolor image
+            header[12] = (width and 0xFF).toByte()
+            header[13] = ((width shr 8) and 0xFF).toByte()
+            header[14] = (height and 0xFF).toByte()
+            header[15] = ((height shr 8) and 0xFF).toByte()
+            header[16] = 32 // 32 bits per pixel
+
+            out.write(header)
+
+            // Image Data
+            for (y in height - 1 downTo 0) { // TGA stores pixels bottom to top
+                for (x in 0 until width) {
+                    val rgba = image.getRGB(x, y)
+                    out.writeByte((rgba and 0xFF))        // Blue
+                    out.writeByte((rgba shr 8) and 0xFF) // Green
+                    out.writeByte((rgba shr 16) and 0xFF) // Red
+                    out.writeByte((rgba shr 24) and 0xFF) // Alpha
+                }
+            }
+        }
+    }
+
     private fun getPath(fileName: String): File {
         val imagesDir = "images"
         return File(Paths.get(DIR_HOME, imagesDir, fileName).toUri())
@@ -46,5 +81,13 @@ object Images {
         }
         return image
     }
+
+    /*
+        HEADER: 00 00 0A / 00 00 00 00 00 00 00 00 00 / 40 01 30 00 20 00
+
+        viewer: https://schmittl.github.io/tgajs/
+        useful: https://docs.fileformat.com/image/tga/
+        metadata: https://www.metadata2go.com/result#j=348584d7-a4db-4442-bdd3-ea696da745ff
+    */
 
 }

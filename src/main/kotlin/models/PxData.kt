@@ -1,5 +1,7 @@
 package models
 
+import RGBA
+import tools.PxFilter
 import java.awt.image.BufferedImage
 
 /*
@@ -7,8 +9,6 @@ import java.awt.image.BufferedImage
 */
 
 class PxData {
-    data class RGBA(val r: Int, val g: Int, val b: Int, val a: Int)
-
     private var rgbaArray: Array<Array<RGBA>>
 
     constructor(image: BufferedImage) {
@@ -38,5 +38,8 @@ class PxData {
     }
 
     fun getData(): Array<Array<RGBA>> = rgbaArray
+    val highlights: PxData get() = PxFilter.getHMS(this).highlights
+    val midtones: PxData get() = PxFilter.getHMS(this).midtones
+    val shadows: PxData get() = PxFilter.getHMS(this).shadows
 
 }

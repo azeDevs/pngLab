@@ -1,64 +1,85 @@
 package tools
 
+import HMS
+import RGBA
 import models.PxData
 import java.awt.Color
 
 object PxFilter {
 
-    fun filterTopLuminosity(pxData: PxData): PxData {
-        val rgbaArray = pxData.getData()
-        val luminosityThreshold = findLuminosityThreshold(rgbaArray)
+    fun getHMS(pxData: PxData, lowerBound: Float = 0.16f, upperBound: Float = 0.84f, fuzziness: Float = 0.16f): HMS {
+        val highlights = byBrightness(pxData, upperBound, 1.0f, fuzziness)
+        val midtones = byBrightness(pxData, lowerBound, upperBound, fuzziness)
+        val shadows = byBrightness(pxData, 0.0f, lowerBound, fuzziness)
 
-        val filteredArray = rgbaArray.map { row ->
-            row.map { rgba ->
-                if (calculateLuminosity(rgba) >= luminosityThreshold) rgba else PxData.RGBA(0, 0, 0, 0)
+        return HMS(highlights, midtones, shadows)
+    }
+
+    private fun calculateMidtones(original: PxData, highlights: PxData, shadows: PxData): PxData {
+        val originalArray = original.getData()
+        val highlightsArray = highlights.getData()
+        val shadowsArray = shadows.getData()
+
+        val midtonesArray = originalArray.mapIndexed { y, row ->
+            row.mapIndexed { x, rgba ->
+                val originalAlpha = rgba.a
+                val highlightAlpha = highlightsArray[y][x].a
+                val shadowAlpha = shadowsArray[y][x].a
+
+                val maxAlphaAdjustment = maxOf(highlightAlpha, shadowAlpha)
+                val midtoneAlpha = if (originalAlpha > maxAlphaAdjustment) originalAlpha - maxAlphaAdjustment else 0
+
+                RGBA(rgba.r, rgba.g, rgba.b, midtoneAlpha)
             }.toTypedArray()
         }.toTypedArray()
 
-        return PxData(filteredArray)
+        return PxData(midtonesArray)
     }
 
-    private fun calculateLuminosity(rgba: PxData.RGBA): Double {
-        // Using a common formula for luminance
-        return 0.299 * rgba.r + 0.587 * rgba.g + 0.114 * rgba.b
-    }
-
-    private fun findLuminosityThreshold(rgbaArray: Array<Array<PxData.RGBA>>): Double {
-        val luminosities = rgbaArray.flatten().map { calculateLuminosity(it) }
-        val sortedLuminosities = luminosities.sorted()
-        val thresholdIndex = (sortedLuminosities.size * 0.8).toInt() // Top 20%
-        return sortedLuminosities.getOrElse(thresholdIndex) { 0.0 }
-    }
-
-    fun byBrightness(pxData: PxData, lowerBound: Float = 0.2f, upperBound: Float = 0.8f): PxData {
+    private fun byBrightness(pxData: PxData, lowerBound: Float, upperBound: Float, fuzziness: Float): PxData {
         val rgbaArray = pxData.getData()
-        val brightnessThresholds = findBrightnessThresholds(rgbaArray, lowerBound, upperBound)
+        val brightnessThresholds = findBrightnessThresholds(rgbaArray, lowerBound, upperBound, fuzziness)
 
         val filteredArray = rgbaArray.map { row ->
             row.map { rgba ->
                 val brightness = calculateBrightness(rgba)
-                if (brightness in brightnessThresholds) rgba else PxData.RGBA(0, 0, 0, 0)
+                val alphaAdjustment = calculateAlphaAdjustment(brightness, brightnessThresholds, fuzziness)
+                RGBA(rgba.r, rgba.g, rgba.b, (rgba.a * alphaAdjustment).toInt())
             }.toTypedArray()
         }.toTypedArray()
 
         return PxData(filteredArray)
     }
 
-    private fun calculateBrightness(rgba: PxData.RGBA): Float {
-        val hsbVals = Color.RGBtoHSB(rgba.r, rgba.g, rgba.b, null)
-        return hsbVals[2] // Brightness is the third value in HSB array
+    private fun calculateAlphaAdjustment(brightness: Float, thresholds: ClosedFloatingPointRange<Float>, fuzziness: Float): Float {
+        val lowerThreshold = thresholds.start - fuzziness
+        val upperThreshold = thresholds.endInclusive + fuzziness
+
+        return when {
+            brightness < lowerThreshold -> 0.0f
+            brightness in lowerThreshold..thresholds.start -> (brightness - lowerThreshold) / fuzziness
+            brightness in thresholds.endInclusive..upperThreshold -> (upperThreshold - brightness) / fuzziness
+            brightness > upperThreshold -> 0.0f
+            else -> 1.0f
+        }.coerceIn(0.0f, 1.0f)
     }
 
-    private fun findBrightnessThresholds(rgbaArray: Array<Array<PxData.RGBA>>, lowerBound: Float, upperBound: Float): ClosedFloatingPointRange<Float> {
+    private fun findBrightnessThresholds(rgbaArray: Array<Array<RGBA>>, lowerBound: Float, upperBound: Float, fuzziness: Float): ClosedFloatingPointRange<Float> {
         val brightnessValues = rgbaArray.flatten().map { calculateBrightness(it) }
         val sortedBrightness = brightnessValues.sorted()
-        val lowerIndex = (sortedBrightness.size * lowerBound).toInt().coerceIn(0, sortedBrightness.size)
-        val upperIndex = (sortedBrightness.size * upperBound).toInt().coerceIn(0, sortedBrightness.size)
+        val size = sortedBrightness.size
+        val lowerIndex = (size * (lowerBound - fuzziness)).coerceIn(0f, size.toFloat()).toInt()
+        val upperIndex = (size * (upperBound + fuzziness)).coerceIn(0f, size.toFloat()).toInt()
 
         val lowerThreshold = sortedBrightness.getOrElse(lowerIndex) { 0.0f }
         val upperThreshold = sortedBrightness.getOrElse(upperIndex) { 1.0f }
 
         return lowerThreshold..upperThreshold
+    }
+
+    private fun calculateBrightness(rgba: RGBA): Float {
+        val hsbVals = Color.RGBtoHSB(rgba.r, rgba.g, rgba.b, null)
+        return hsbVals[2] // Brightness is the third value in HSB array
     }
 
 }

@@ -1,36 +1,34 @@
 import models.PxData
 import tools.*
 import utils.Images
+import utils.Printer
 import utils.Printer.getColorStr
 
 fun main() {
 
-    val image = Images.loadPng()
-    if (image != null) {
+    val pngImage = Images.loadPng()
+    if (pngImage != null) {
 
-        val pxData = PxData(image)
+        val pngData = PxData(pngImage)
+        Printer.printPixelDataValues(pngData)
 
-//        Printer.printPixelDataValues(pixelData)
-
-        println("Avg Lumin: ${getColorStr(
-            PxAnalyzer.getAverageRGB(PxFilter.filterTopLuminosity(pxData))
+        println("Avg highlight: ${getColorStr(
+            PxAnalyzer.getAverageRGB(pngData.highlights)
         )}")
-        println("Avg light: ${getColorStr(
-            PxAnalyzer.getAverageRGB(PxFilter.byBrightness(pxData, 0.75f, 1.0f))
+        println("Avg midtone:   ${getColorStr(
+            PxAnalyzer.getAverageRGB(pngData.midtones)
         )}")
-        println("Avg midtn: ${getColorStr(
-            PxAnalyzer.getAverageRGB(PxFilter.byBrightness(pxData, 0.25f, 0.75f))
+        println("Avg shadow:    ${getColorStr(
+            PxAnalyzer.getAverageRGB(pngData.shadows)
         )}")
-        println("Avg shade: ${getColorStr(
-            PxAnalyzer.getAverageRGB(PxFilter.byBrightness(pxData, 0.0f, 0.25f))
-        )}")
-        Images.savePng(PxFilter.byBrightness(pxData, 0.75f, 1.0f), "out_h")
-        Images.savePng(PxFilter.byBrightness(pxData, 0.25f, 0.75f), "out_m")
-        Images.savePng(PxFilter.byBrightness(pxData, 0.0f, 0.25f), "out_s")
-
-//        Loader.start()
+        Images.savePng(pngData.highlights, "out_h")
+        Images.savePng(pngData.midtones, "out_m")
+        Images.savePng(pngData.shadows, "out_s")
+        Images.saveTga(pngData, "tgatest")
 
     } else println("Failed to load the image.")
 
 }
 
+data class HMS(val highlights: PxData, val midtones: PxData, val shadows: PxData)
+data class RGBA(val r: Int, val g: Int, val b: Int, val a: Int)

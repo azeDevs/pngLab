@@ -1,5 +1,7 @@
 package utils
 
+import GetStr.getColorName
+import RGBA
 import models.PxData
 import tools.PxAnalyzer
 import java.awt.Color
@@ -40,10 +42,14 @@ object Printer {
         println("IMAGE DIMENSIONS: ${width}x$height")
         println("INVISIBLE PIXELS: $totalSkippedPixels / $totalPixels " +
                 "(${String.format("%.0f%%", 100f * totalSkippedPixels / totalPixels)})")
-        println("\nAVERAGE COLOR:    ${getColorStr(PxAnalyzer.getAverageRGB(pxData))}\n")
+        println("\nAVERAGE COLOR:  " +
+                getColorName(PxAnalyzer.getAverageRGB(pxData)) + bar +
+                getRGBAStr(PxAnalyzer.getAverageRGB(pxData)) +
+                getHSBStr(PxAnalyzer.getAverageRGB(pxData)) +
+                "\n")
     }
 
-    fun getColorStr(rgba: PxData.RGBA) =
+    fun getColorStr(rgba: RGBA) =
         getHexStr(rgba) +
         getRGBAStr(rgba) +
         getHSBStr(rgba)
@@ -53,7 +59,7 @@ object Printer {
         return String.format(coordFormat, x + 1, y + 1)
     }
 
-    private fun getRGBAStr(rgba: PxData.RGBA): String {
+    private fun getRGBAStr(rgba: RGBA): String {
         val rgbaFormat = "%-${columnWidth}s %-${columnWidth}s %-${columnWidth}s %-${columnWidth}s$bar"
         return String.format(
             rgbaFormat,
@@ -64,7 +70,7 @@ object Printer {
         )
     }
 
-    private fun getHSBStr(rgba: PxData.RGBA): String {
+    private fun getHSBStr(rgba: RGBA): String {
         val hsbVals = Color.RGBtoHSB(rgba.r, rgba.g, rgba.b, null)
         val hueDegrees = hsbVals[0] * 360
         val saturationPercentage = hsbVals[1] * 100
@@ -80,10 +86,10 @@ object Printer {
         )
     }
 
-    private fun getHexStr(rgba: PxData.RGBA): String {
+    private fun getHexStr(rgba: RGBA): String {
         val hexFormat = "%-${columnWidth}s"
-        val hex = String.format("#%02x%02x%02x %02x", rgba.r, rgba.g, rgba.b, rgba.a).toUpperCase()
-        return String.format(hexFormat, "$hex$bar")
+        val hex = GetStr.getHexFromRGBA(rgba) //getColorName(rgba)
+        return String.format(hexFormat, "#$hex$bar")
     }
 
 }
